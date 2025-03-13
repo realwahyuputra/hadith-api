@@ -62,6 +62,34 @@ class HadithModel {
     return words.reduce((acc, word) =>
       acc + ` ${word[0].toUpperCase() + word.substr(1).toLowerCase()}`, '').trim()
   }
+
+  public searchInCollection(hadith: HadithContent[], keyword: string): HadithContent[] {
+    if (!hadith) return [];
+    
+    const normalizedKeyword = keyword.toLowerCase();
+    return hadith.filter(item => 
+      item.arab.toLowerCase().includes(normalizedKeyword) || 
+      item.id.toLowerCase().includes(normalizedKeyword)
+    );
+  }
+
+  public searchAllCollections(keyword: string): Array<HadithContent & { collection: string }> {
+    const results: Array<HadithContent & { collection: string }> = [];
+    
+    Object.entries(allHadiths).forEach(([collectionName, hadiths]) => {
+      const matchingHadiths = this.searchInCollection(hadiths, keyword);
+      
+      // Add collection information to each result
+      matchingHadiths.forEach(hadith => {
+        results.push({
+          ...hadith,
+          collection: collectionName
+        });
+      });
+    });
+    
+    return results;
+  }
 }
 
 export default new HadithModel()
