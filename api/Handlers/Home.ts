@@ -10,17 +10,17 @@ class HomeHandler extends Handler {
         source: 'https://github.com/gadingnst/hadith-api',
         endpoints: {
           list: {
-            pattern: 'https://api.hadith.gading.dev/books',
+            pattern: 'https://hadith-mps.vercel.app/books',
             description: 'Returns the list of available Hadith Books.'
           },
           hadith: {
-            pattern: 'https://api.hadith.gading.dev/books/{name}?range={number}-{number}',
-            example: 'https://api.hadith.gading.dev/books/muslim?range=1-150',
+            pattern: 'https://hadith-mps.vercel.app/books/{name}?range={number}-{number}',
+            example: 'https://hadith-mps.vercel.app/books/muslim?range=1-150',
             description: 'Returns hadiths by range of number. (Note: For performance reasons, max accepted range: 300)'
           },
           spesific: {
-            pattern: 'https://api.hadith.gading.dev/books/{name}/{number}',
-            example: 'https://api.hadith.gading.dev/books/bukhari/52',
+            pattern: 'https://hadith-mps.vercel.app/books/{name}/{number}',
+            example: 'https://hadith-mps.vercel.app/books/bukhari/52',
             description: 'Returns spesific hadith.'
           }
         }
