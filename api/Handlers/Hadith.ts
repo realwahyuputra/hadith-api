@@ -117,7 +117,7 @@ class HadithHandler extends Handler {
 
   public searchByKeyword(req: Request, res: Response): void {
     const { keyword } = req.query;
-    const { collection } = req.params;
+    const { name } = req.params;
     
     try {
       if (!keyword || typeof keyword !== 'string') {
@@ -128,10 +128,10 @@ class HadithHandler extends Handler {
       }
 
       let results;
-      if (collection) {
+      if (name) {
         // Search within a specific collection
-        const hadithName = Hadith.beautyName(collection);
-        const hadith = Hadith.getByName(collection);
+        const hadithName = Hadith.beautyName(name);
+        const hadith = Hadith.getByName(name);
         
         if (!hadith) {
           this.setHttpError({
@@ -147,7 +147,7 @@ class HadithHandler extends Handler {
           message: `Found ${results.length} hadiths containing "${keyword}" in ${hadithName}.`,
           data: {
             collection: hadithName,
-            id: collection,
+            id: name,
             keyword,
             count: results.length,
             hadiths: results
