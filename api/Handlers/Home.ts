@@ -22,6 +22,16 @@ class HomeHandler extends Handler {
             pattern: 'https://hadith-mps.vercel.app/books/{name}/{number}',
             example: 'https://hadith-mps.vercel.app/books/bukhari/52',
             description: 'Returns spesific hadith.'
+          },
+          search: {
+            pattern: 'https://hadith-mps.vercel.app/books/search?keyword={keyword}',
+            example: 'https://hadith-mps.vercel.app/books/search?keyword=prayer',
+            description: 'Search for hadiths containing a specific keyword across all collections.'
+          },
+          searchInCollection: {
+            pattern: 'https://hadith-mps.vercel.app/books/{name}/search?keyword={keyword}',
+            example: 'https://hadith-mps.vercel.app/books/bukhari/search?keyword=prayer',
+            description: 'Search for hadiths containing a specific keyword within a specific collection.'
           }
         }
       })
