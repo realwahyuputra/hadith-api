@@ -115,6 +115,63 @@ class HadithHandler extends Handler {
     }
   }
 
+  public searchByKeyword(req: Request, res: Response): void {
+    const { keyword } = req.query;
+    const { collection } = req.params;
+    
+    try {
+      if (!keyword || typeof keyword !== 'string') {
+        this.setHttpError({
+          code: 400,
+          message: 'Keyword parameter is required and must be a string'
+        });
+      }
+
+      let results;
+      if (collection) {
+        // Search within a specific collection
+        const hadithName = Hadith.beautyName(collection);
+        const hadith = Hadith.getByName(collection);
+        
+        if (!hadith) {
+          this.setHttpError({
+            code: 404,
+            message: `${hadithName} not available.`
+          });
+        }
+        
+        results = Hadith.searchInCollection(hadith, keyword as string);
+        
+        this.sendHttp(res, {
+          code: 200,
+          message: `Found ${results.length} hadiths containing "${keyword}" in ${hadithName}.`,
+          data: {
+            collection: hadithName,
+            id: collection,
+            keyword,
+            count: results.length,
+            hadiths: results
+          }
+        });
+      } else {
+        // Search across all collections
+        results = Hadith.searchAllCollections(keyword as string);
+        
+        this.sendHttp(res, {
+          code: 200,
+          message: `Found ${results.length} hadiths containing "${keyword}" across all collections.`,
+          data: {
+            keyword,
+            count: results.length,
+            hadiths: results
+          }
+        });
+      }
+    } catch (err) {
+      this.handleHttpError(req, res, err as Error);
+    }
+  }
+
 }
 
 export default new HadithHandler()
