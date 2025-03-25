@@ -2,6 +2,13 @@ import Express, { Application } from 'express'
 import Cors from 'cors'
 import Routes from './api/Routes'
 
+// Clear module cache to ensure fresh imports
+Object.keys(require.cache).forEach(function(key) {
+  if (key.includes('api/')) {
+    delete require.cache[key];
+  }
+});
+
 class Server {
   public application: Application
   private port: number | string

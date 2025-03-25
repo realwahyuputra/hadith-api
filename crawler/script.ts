@@ -7,7 +7,6 @@ const { writeFile } = Fs.promises
 
 const _ = (async () => {
   await getAllHaditsByName('nasai', 358, 10)
-  console.log('> We were done!')
 })()
 
 type Data = {
@@ -16,9 +15,7 @@ type Data = {
   id: string
 }
 
-async function getAllHaditsByName(haditsName: string, maxPage: number, worker = 5, headless = true): Promise<void> {
-  console.log(`> Get started to crawl HR.${haditsName.toUpperCase()}..`)
-  
+async function getAllHaditsByName(haditsName: string, maxPage: number, worker = 5, headless = true): Promise<void> {  
   let data: Data[] = []
   const browser = await Browser(headless)
   const max = Math.ceil(maxPage / worker)
@@ -28,19 +25,15 @@ async function getAllHaditsByName(haditsName: string, maxPage: number, worker = 
     const offset = ((i - 1) * worker) + 1
     const limit = i * worker
     const pages = range(offset, limit)
-    console.log(`> Getting on page: ${pages.join(',')}`)
     const hadits = await Promise.all(pages.map(page => 
       getHadits(browser, haditsName, page)
     ))
     data = [...data, ...hadits.flat(1)]
-    console.log('> Done')
     await sleep({ delay: 500 })
   }
 
   browser.close()
-  console.log(`\n> Writing to ${fileName}..`)
   await writeFile(fileName, JSON.stringify(data, null, 2))
-  console.log(`> Crawl HR.${haditsName.toUpperCase()} Done!\n`)
 }
 
 async function getHadits(browser: IBrowser, haditsName: string, num: number): Promise<Data[]> {

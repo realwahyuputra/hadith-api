@@ -6,13 +6,16 @@ class HadithHandler extends Handler {
 
   public index(req: Request, res: Response): void {
     try {
+      // Check what the Hadith model is returning
       const data = Hadith.available()
+      
       this.sendHttp(res, {
         code: 200,
         message: `${data.length} books sent.`,
         data
       })
     } catch (err) {
+      console.error('Error in HadithHandler.index:', err)
       this.handleHttpError(req, res, err as Error)
     }
   }
@@ -112,6 +115,63 @@ class HadithHandler extends Handler {
       }
     } catch (err) {
       this.handleHttpError(req, res, err as Error)
+    }
+  }
+
+  public searchByKeyword(req: Request, res: Response): void {
+    const { keyword } = req.query;
+    const { name } = req.params;
+    
+    try {
+      if (!keyword || typeof keyword !== 'string') {
+        this.setHttpError({
+          code: 400,
+          message: 'Keyword parameter is required and must be a string'
+        });
+      }
+
+      let results;
+      if (name) {
+        // Search within a specific collection
+        const hadithName = Hadith.beautyName(name);
+        const hadith = Hadith.getByName(name);
+        
+        if (!hadith) {
+          this.setHttpError({
+            code: 404,
+            message: `${hadithName} not available.`
+          });
+        }
+        
+        results = Hadith.searchInCollection(hadith, keyword as string);
+        
+        this.sendHttp(res, {
+          code: 200,
+          message: `Found ${results.length} hadiths containing "${keyword}" in ${hadithName}.`,
+          data: {
+            collection: hadithName,
+            id: name,
+            keyword,
+            count: results.length,
+            hadiths: results
+          }
+        });
+      } else {
+        // Search across all collections
+        results = Hadith.searchAllCollections(keyword as string);
+        
+        this.sendHttp(res, {
+          code: 200,
+          message: `Found ${results.length} hadiths containing "${keyword}" across all collections.`,
+          data: {
+            keyword,
+            count: results.length,
+            hadiths: results
+          }
+        });
+      }
+    } catch (err) {
+      this.handleHttpError(req, res, err as Error);
     }
   }
 

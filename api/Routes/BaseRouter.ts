@@ -15,7 +15,9 @@ abstract class BaseRouter<T = object> {
   protected bindHandler(handler: RequestHandler): RequestHandler {
     if (typeof this.binder !== 'object') {
       throw new Error(`If you want to use 'bindHandler' method, property 'binder' must be 'object' which has RequestHandler. Received: '${typeof this.binder}'`)
-    }
+    }    
+    
+    // Make sure we're actually binding to the correct object
     return handler.bind(this.binder)
   }
 
